@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import { Counter } from './features/counter/Counter';
+import { ButtonPrimary } from './components/Button/index.tsx';  
 import './App.css';
 
 function App() {
@@ -12,6 +13,15 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
+
+        <ButtonPrimary
+                  style={{ width: 'fit-content' }}
+                  padding="8px"
+                  $borderRadius="8px"
+                >
+                  <p>Unlock Voting</p>
+         </ButtonPrimary>
+
         <span>
           <span>Learn </span>
           <a
