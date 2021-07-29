@@ -9,7 +9,7 @@ import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
 import { L2_CHAIN_IDS } from 'constants/chains'
 import { useV3Positions } from 'hooks/useV3Positions'
 import { useActiveWeb3React } from 'hooks/web3'
-import { useContext } from 'react'
+import { useCallback, useContext, useMemo, useRef, useState } from 'react'
 import { BookOpen, ChevronDown, ChevronsRight, Inbox, Layers, PlusCircle } from 'react-feather'
 import { Link } from 'react-router-dom'
 import { useWalletModalToggle } from 'state/application/hooks'
@@ -19,6 +19,14 @@ import { HideSmall, TYPE } from 'theme'
 import { PositionDetails } from 'types/position'
 import CTACards from './CTACards'
 import { LoadingRows } from './styleds'
+import CurrencyList from 'components/SearchModal/CurrencyList'
+import { Currency, Token } from '@uniswap/sdk-core'
+import useDebounce from 'hooks/useDebounce'
+import { ExtendedEther } from '../../constants/tokens'
+import { filterTokens, useSortedTokensByQueryAndBalanceNotNull } from 'components/SearchModal/filtering'
+import { useTokenComparator } from 'components/SearchModal/sorting'
+import { useAllTokens, useSearchInactiveTokenLists } from '../../hooks/Tokens'
+import { FixedSizeList } from 'react-window'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 870px;
@@ -188,7 +196,53 @@ export default function Pool() {
       external: true,
     },
   ]
+  const allTokens = useAllTokens()
+  const [invertSearchOrder] = useState<boolean>(false)
+  const tokenComparator = useTokenComparator(invertSearchOrder)
+  const ether = useMemo(() => chainId && ExtendedEther.onChain(chainId), [chainId])
+  const [searchQuery] = useState<string>('')
+  const debouncedQuery = useDebounce(searchQuery, 200)
+  const filteredTokens: Token[] = useMemo(() => {
+    return filterTokens(Object.values(allTokens), debouncedQuery)
+  }, [allTokens, debouncedQuery])
+  const sortedTokens: Token[] = useMemo(() => {
+    return filteredTokens.sort(tokenComparator)
+  }, [filteredTokens, tokenComparator])
 
+  const filteredSortedTokens = useSortedTokensByQueryAndBalanceNotNull(sortedTokens, debouncedQuery)
+  const filteredSortedTokensWithETH: Currency[] = useMemo(() => {
+    const s = debouncedQuery.toLowerCase().trim()
+    if (s === '' || s === 'e' || s === 'et' || s === 'eth') {
+      return ether ? [ether, ...filteredSortedTokens] : filteredSortedTokens
+    }
+    return filteredSortedTokens
+  }, [debouncedQuery, ether, filteredSortedTokens])
+  const filteredInactiveTokens = useSearchInactiveTokenLists(
+    filteredTokens.length === 0 || debouncedQuery.length > 2 ? debouncedQuery : undefined
+  )
+
+  function onCurrencySelect(currency: Currency) {
+    console.log(currency)
+  }
+  function onDismiss() {
+    console.log('dismiss')
+  }
+  const handleCurrencySelect = useCallback(
+    (currency: Currency) => {
+      onCurrencySelect(currency)
+      onDismiss()
+    },
+    [onDismiss, onCurrencySelect]
+  )
+  const otherSelectedCurrency = null
+  const selectedCurrency = null
+  const fixedList = useRef<FixedSizeList>()
+  function showImportView() {
+    console.log('showImportView')
+  }
+  function setImportToken(token: Token) {
+    console.log(token)
+  }
   return (
     <>
       <PageWrapper>
@@ -250,6 +304,18 @@ export default function Pool() {
                       <Trans>Your V3 liquidity positions will appear here.</Trans>
                     </div>
                   </TYPE.body>
+                  <CurrencyList
+                    height={500}
+                    currencies={filteredSortedTokensWithETH}
+                    otherListTokens={filteredInactiveTokens}
+                    onCurrencySelect={handleCurrencySelect}
+                    otherCurrency={otherSelectedCurrency}
+                    selectedCurrency={selectedCurrency}
+                    fixedListRef={fixedList}
+                    showImportView={showImportView}
+                    setImportToken={setImportToken}
+                    showCurrencyAmount={true}
+                  />
                   {showConnectAWallet && (
                     <ButtonPrimary style={{ marginTop: '2em', padding: '8px 16px' }} onClick={toggleWalletModal}>
                       <Trans>Connect a wallet</Trans>
@@ -258,7 +324,6 @@ export default function Pool() {
                 </NoLiquidity>
               )}
             </MainContentWrapper>
-
             <ResponsiveRow>
               {showV2Features && (
                 <RowFixed>

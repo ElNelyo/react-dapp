@@ -2,6 +2,8 @@ import { TokenInfo } from '@uniswap/token-lists'
 import { useMemo } from 'react'
 import { isAddress } from '../../utils'
 import { Token } from '@uniswap/sdk-core'
+import { useTokenBalance } from '../../state/wallet/hooks'
+import { useActiveWeb3React } from '../../hooks/web3'
 
 const alwaysTrue = () => true
 
@@ -11,7 +13,6 @@ const alwaysTrue = () => true
  */
 export function createTokenFilterFunction<T extends Token | TokenInfo>(search: string): (tokens: T) => boolean {
   const searchingAddress = isAddress(search)
-
   if (searchingAddress) {
     const lower = searchingAddress.toLowerCase()
     return (t: T) => ('isToken' in t ? searchingAddress === t.address : lower === t.address.toLowerCase())
@@ -61,6 +62,45 @@ export function useSortedTokensByQuery(tokens: Token[] | undefined, searchQuery:
 
     // sort tokens by exact match -> subtring on symbol match -> rest
     tokens.map((token) => {
+      if (token.symbol?.toLowerCase() === symbolMatch[0]) {
+        return exactMatches.push(token)
+      } else if (token.symbol?.toLowerCase().startsWith(searchQuery.toLowerCase().trim())) {
+        return symbolSubtrings.push(token)
+      } else {
+        return rest.push(token)
+      }
+    })
+
+    return [...exactMatches, ...symbolSubtrings, ...rest]
+  }, [tokens, searchQuery])
+}
+
+function Balance(token: Token) {
+  const { account } = useActiveWeb3React()
+  const userTokenBalance = useTokenBalance(account ?? undefined, token)
+  return userTokenBalance
+}
+export function useSortedTokensByQueryAndBalanceNotNull(tokens: Token[] | undefined, searchQuery: string): Token[] {
+  return useMemo(() => {
+    if (!tokens) {
+      return []
+    }
+
+    const symbolMatch = searchQuery
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((s) => s.length > 0)
+
+    if (symbolMatch.length > 1) {
+      return tokens
+    }
+
+    const exactMatches: Token[] = []
+    const symbolSubtrings: Token[] = []
+    const rest: Token[] = []
+    // sort tokens by exact match -> subtring on symbol match -> rest
+    tokens.map((token) => {
+      const balance = Balance(token)
       if (token.symbol?.toLowerCase() === symbolMatch[0]) {
         return exactMatches.push(token)
       } else if (token.symbol?.toLowerCase().startsWith(searchQuery.toLowerCase().trim())) {

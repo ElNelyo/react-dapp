@@ -1,6 +1,5 @@
 import { Trans } from '@lingui/macro'
 import useScrollPosition from '@react-hook/window-scroll'
-import { CHAIN_INFO, SupportedChainId } from 'constants/chains'
 import { darken } from 'polished'
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
@@ -8,14 +7,11 @@ import { Text } from 'rebass'
 import { useShowClaimPopup, useToggleSelfClaimModal } from 'state/application/hooks'
 import { useUserHasAvailableClaim } from 'state/claim/hooks'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
-import { useDarkModeManager } from 'state/user/hooks'
 import { useETHBalances } from 'state/wallet/hooks'
 import styled from 'styled-components/macro'
-import Logo from '../../assets/svg/logo.svg'
-import LogoDark from '../../assets/svg/logo_white.svg'
-import LogoBoleroDark from '../../assets/images/bolero_music_white.png'
+import LogoBolero from '../../assets/images/bolero_music_white.png'
 import { useActiveWeb3React } from '../../hooks/web3'
-import { ExternalLink, TYPE } from '../../theme'
+import { TYPE } from '../../theme'
 import ClaimModal from '../claim/ClaimModal'
 import { CardNoise } from '../earn/styled'
 import Menu from '../Menu'
@@ -210,45 +206,14 @@ const StyledNavLink = styled(NavLink).attrs({
     color: ${({ theme }) => darken(0.1, theme.text1)};
   }
 `
-
-const StyledExternalLink = styled(ExternalLink).attrs({
-  activeClassName,
-})<{ isActive?: boolean }>`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: left;
-  border-radius: 3rem;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: ${({ theme }) => theme.text2};
-  font-size: 1rem;
-  width: fit-content;
-  margin: 0 12px;
-  font-weight: 500;
-
-  &.${activeClassName} {
-    border-radius: 12px;
-    font-weight: 600;
-    color: ${({ theme }) => theme.text1};
-  }
-
-  :hover,
-  :focus {
-    color: ${({ theme }) => darken(0.1, theme.text1)};
-    text-decoration: none;
-  }
-`
-
 export default function Header() {
-  const { account, chainId } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
-  const [darkMode] = useDarkModeManager()
 
   const toggleClaimModal = useToggleSelfClaimModal()
 
   const availableClaim: boolean = useUserHasAvailableClaim(account)
-
   const { claimTxn } = useUserHasSubmittedClaim(account ?? undefined)
 
   const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
@@ -256,19 +221,15 @@ export default function Header() {
 
   const scrollY = useScrollPosition()
 
-  const { infoLink } = CHAIN_INFO[chainId ? chainId : SupportedChainId.MAINNET]
   return (
     <HeaderFrame showBackground={scrollY > 45}>
       <ClaimModal />
       <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
         <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
       </Modal>
-      <Title href=".">
+      <Title href="https://www.bolero-music.app/" target="blank">
         <UniIcon>
-          <img width={'24px'} src={darkMode ? LogoDark : Logo} alt="logo" />
-        </UniIcon>
-        <UniIcon>
-          <img width={'24px'} src={darkMode ? LogoDark : Logo} alt="logo" />
+          <img width={'250px'} src={LogoBolero} alt="logo" />
         </UniIcon>
       </Title>
       <HeaderLinks>
@@ -288,15 +249,6 @@ export default function Header() {
         >
           <Trans>Pool</Trans>
         </StyledNavLink>
-        {chainId && chainId === SupportedChainId.MAINNET && (
-          <StyledNavLink id={`stake-nav-link`} to={'/vote'}>
-            <Trans>Vote</Trans>
-          </StyledNavLink>
-        )}
-        <StyledExternalLink id={`stake-nav-link`} href={infoLink}>
-          <Trans>Charts</Trans>
-          <sup>↗</sup>
-        </StyledExternalLink>
       </HeaderLinks>
 
       <HeaderControls>
