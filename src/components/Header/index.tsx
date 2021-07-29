@@ -247,7 +247,7 @@ export default function Header() {
             pathname.startsWith('/find')
           }
         >
-          <Trans>Pool</Trans>
+          <Trans>Wallet</Trans>
         </StyledNavLink>
       </HeaderLinks>
 

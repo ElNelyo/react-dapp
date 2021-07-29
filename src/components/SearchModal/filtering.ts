@@ -4,6 +4,7 @@ import { isAddress } from '../../utils'
 import { Token } from '@uniswap/sdk-core'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { useActiveWeb3React } from '../../hooks/web3'
+import { useTokenBalances } from '../../state/wallet/hooks'
 
 const alwaysTrue = () => true
 
@@ -75,11 +76,6 @@ export function useSortedTokensByQuery(tokens: Token[] | undefined, searchQuery:
   }, [tokens, searchQuery])
 }
 
-function Balance(token: Token) {
-  const { account } = useActiveWeb3React()
-  const userTokenBalance = useTokenBalance(account ?? undefined, token)
-  return userTokenBalance
-}
 export function useSortedTokensByQueryAndBalanceNotNull(tokens: Token[] | undefined, searchQuery: string): Token[] {
   return useMemo(() => {
     if (!tokens) {
@@ -100,7 +96,6 @@ export function useSortedTokensByQueryAndBalanceNotNull(tokens: Token[] | undefi
     const rest: Token[] = []
     // sort tokens by exact match -> subtring on symbol match -> rest
     tokens.map((token) => {
-      const balance = Balance(token)
       if (token.symbol?.toLowerCase() === symbolMatch[0]) {
         return exactMatches.push(token)
       } else if (token.symbol?.toLowerCase().startsWith(searchQuery.toLowerCase().trim())) {

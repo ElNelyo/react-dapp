@@ -19,7 +19,7 @@ import { HideSmall, TYPE } from 'theme'
 import { PositionDetails } from 'types/position'
 import CTACards from './CTACards'
 import { LoadingRows } from './styleds'
-import CurrencyList from 'components/SearchModal/CurrencyList'
+import CurrencyListNoEmpty from 'components/SearchModal/CurrencyListNoEmpty'
 import { Currency, Token } from '@uniswap/sdk-core'
 import useDebounce from 'hooks/useDebounce'
 import { ExtendedEther } from '../../constants/tokens'
@@ -304,7 +304,7 @@ export default function Pool() {
                       <Trans>Your V3 liquidity positions will appear here.</Trans>
                     </div>
                   </TYPE.body>
-                  <CurrencyList
+                  <CurrencyListNoEmpty
                     height={500}
                     currencies={filteredSortedTokensWithETH}
                     otherListTokens={filteredInactiveTokens}
