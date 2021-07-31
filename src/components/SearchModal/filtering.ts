@@ -2,9 +2,6 @@ import { TokenInfo } from '@uniswap/token-lists'
 import { useMemo } from 'react'
 import { isAddress } from '../../utils'
 import { Token } from '@uniswap/sdk-core'
-import { useTokenBalance } from '../../state/wallet/hooks'
-import { useActiveWeb3React } from '../../hooks/web3'
-import { useTokenBalances } from '../../state/wallet/hooks'
 
 const alwaysTrue = () => true
 

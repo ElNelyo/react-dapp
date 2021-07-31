@@ -1,46 +1,43 @@
-# Uniswap Interface
+# BOLERO DAPP
 
-[![Unit Tests](https://github.com/Uniswap/uniswap-interface/actions/workflows/unit-tests.yaml/badge.svg)](https://github.com/Uniswap/uniswap-interface/actions/workflows/unit-tests.yaml)
-[![Integration Tests](https://github.com/Uniswap/uniswap-interface/actions/workflows/integration-tests.yaml/badge.svg)](https://github.com/Uniswap/uniswap-interface/actions/workflows/integration-tests.yaml)
-[![Lint](https://github.com/Uniswap/uniswap-interface/actions/workflows/lint.yml/badge.svg)](https://github.com/Uniswap/uniswap-interface/actions/workflows/lint.yml)
-[![Release](https://github.com/Uniswap/uniswap-interface/actions/workflows/release.yaml/badge.svg)](https://github.com/Uniswap/uniswap-interface/actions/workflows/release.yaml)
-[![Crowdin](https://badges.crowdin.net/uniswap-interface/localized.svg)](https://crowdin.com/project/uniswap-interface)
+## Blockchain Technical Test
 
-An open source interface for Uniswap -- a protocol for decentralized exchange of Ethereum tokens.
+The goal of this test is to evaluate your ability to architecture a small app connected to Blockchain.
 
-- Website: [uniswap.org](https://uniswap.org/)
-- Interface: [app.uniswap.org](https://app.uniswap.org)
-- Docs: [uniswap.org/docs/](https://uniswap.org/docs/)
-- Twitter: [@Uniswap](https://twitter.com/Uniswap)
-- Reddit: [/r/Uniswap](https://www.reddit.com/r/Uniswap/)
-- Email: [contact@uniswap.org](mailto:contact@uniswap.org)
-- Discord: [Uniswap](https://discord.gg/FCfyBSbCU5)
-- Whitepapers:
-  - [V1](https://hackmd.io/C-DvwDSfSxuh-Gd4WKE_ig)
-  - [V2](https://uniswap.org/whitepaper.pdf)
-  - [V3](https://uniswap.org/whitepaper-v3.pdf)
+### Instructions
 
-## Accessing the Uniswap Interface
+Build a minimal React SPA that can be used as a token swap interface (via Uniswap).
 
-To access the Uniswap Interface, use an IPFS gateway link from the
-[latest release](https://github.com/Uniswap/uniswap-interface/releases/latest),
-or visit [app.uniswap.org](https://app.uniswap.org).
+- the app needs to:
+  - have a homepage with a Swap Interface similar to [Uniswap](https://app.uniswap.org/#/swap), using a [tokenList](https://tokenlists.org/) for the swappable     tokens.<br>
+    *The dAPP will be tested with a fork of the mainnet. You can use ganache-cli to fork it and reproduce the testing env.*
+  - have a navbar with a button to connect a wallet using this library [web3-react](https://github.com/NoahZinsmeister/web3-react).
+    In addition you can use [web3-modal](https://github.com/web3modal/web3modal).
+      *The web3 management must be appwide. (Using Redux or Context).<br>*
+      *The app should correctly handle connection, disconnection, switch wallet, switch network.*
+  - have a private page for a connected wallet displaying his tokens (name, symbol, image, balance).
 
-## Contributions
+### Evaluation Criteria
 
-For steps on local deployment, development, and code contribution, please see [CONTRIBUTING](./CONTRIBUTING.md).
+Please push your code to a public GitHub repository. We'll assess the following in priority:
 
-## Accessing Uniswap V2
+- the quality of the code;
+- the UI & UX of the app;
 
-The Uniswap Interface supports swapping, adding liquidity, removing liquidity and migrating liquidity for 
-Uniswap protocol V2.
+Contact us at jobs@bolero-music.app if you need more details.
 
-- Swap on Uniswap V2: https://app.uniswap.org/#/swap?use=v2
-- View V2 liquidity: https://app.uniswap.org/#/pool/v2
-- Add V2 liquidity: https://app.uniswap.org/#/add/v2
-- Migrate V2 liquidity to V3: https://app.uniswap.org/#/migrate/v2
 
-## Accessing Uniswap V1
- 
-The Uniswap V1 interface for mainnet and testnets is accessible via IPFS gateways 
-linked from the [v1.0.0 release](https://github.com/Uniswap/uniswap-interface/releases/tag/v1.0.0).
+
+## Technical
+
+Install all depedencies
+
+```yarn install```
+
+Start dev server
+
+```yarn start```
+
+Pass tests
+
+```yarn test```
